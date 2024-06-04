@@ -1,94 +1,66 @@
-<!-- <ngx-extended-pdf-viewer
-  [src]="'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf'"
-  [useBrowserLocale]="true"
-  [textLayer]="true"
-  [showHandToolButton]="true"
-  [showPresentationModeButton]="true"
-  [showDownloadButton]="false"
->
-</ngx-extended-pdf-viewer> -->
 <mat-card>
-  <form (ngSubmit)="filterGraph()">
-    <mat-form-field class="example-full-width" appearance="fill">
-      <mat-label for="userDescription1">Buscar pelicula:</mat-label>
-      <input matInput type="text" id="userDescription1" [(ngModel)]="busquedaTitle" name="busquedaTitle"
-        autocomplete="off">
-      <!-- <label for="userDescription2">Segundo parametro Usuario:</label>
-      <input type="text" id="userDescription2" [(ngModel)]="userDescription2" name="userDescription2"> -->
-    </mat-form-field>
-    <br>
-    <button mat-raised-button type="submit" color="primary">Filtrar</button>
-  </form>
-</mat-card>
-<br>
-<div fxLayout="row" fxLayoutAlign="center center">
-  <div fxLayout="row" >
-    aaa
-  </div>
-  <div fxLayout="row" >
-    aaaa
-  </div>
   <mat-card class="mat-elevation-z8">
-    datos
+    <form (ngSubmit)="filterGraph('1', '')">
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label for="userDescription1">Buscar pelicula:</mat-label>
+        <input matInput type="text" id="userDescription1" [(ngModel)]="busquedaTitle" name="busquedaTitle"
+          autocomplete="off">
+        <!-- <label for="userDescription2">Segundo parametro Usuario:</label>
+        <input type="text" id="userDescription2" [(ngModel)]="userDescription2" name="userDescription2"> -->
+      </mat-form-field>
+      <br>
+      <button mat-raised-button type="submit" color="primary">Buscar</button>
+    </form>
   </mat-card>
-  <mat-card class="mat-elevation-z8">
-    datos
-  </mat-card>
-  <mat-card class="mat-elevation-z8">
-    datos
-  </mat-card>
-</div>
-<div fxLayout="row" fxLayoutGap="10px" fxLayoutGap.lt-md="10px" fxLayout.lt-md="column">
-
-
-  <mat-card class="mat-elevation-z8">
-    datos
-  </mat-card>
-
-
   <br>
 
+  <div fxLayout="row" fxLayoutGap="10px" fxLayoutGap.lt-md="10px" fxLayout.lt-md="column">
+    <mat-card class="example-container mat-elevation-z8 example-full-width">
 
-  <mat-card class="mat-elevation-z8">
+      <mat-progress-bar *ngIf="enProceso" color="accent" mode="query"></mat-progress-bar>
 
-    <div class="alerta alerta-warning animated fadeInDown" *ngIf="listaDataPelicula?.length == 0">
-      Sin registros para mostrar
-    </div>
+      <br *ngIf="enProceso">
 
-    <div *ngIf="cantidadRegistros > 0">
+      <div class="alerta alerta-warning animated fadeInDown" *ngIf="listaDataPelicula?.length == 0">
+        Sin registros para mostrar
+      </div>
 
-      <table mat-table [dataSource]="dataSource">
+      <div *ngIf="cantidadRegistros > 0">
 
-        <!-- Pelicula -->
-        <ng-container matColumnDef="label">
-          <th mat-header-cell *matHeaderCellDef> Pelicula </th>
-          <td mat-cell *matCellDef="let row"> {{row.data.label}} </td>
-        </ng-container>
+        <label>
+          <b>{{cantidadRegistros}} peliculas</b>
+        </label>
+        <br>
+        <table mat-table [dataSource]="dataSource">
 
-        <ng-container matColumnDef="acciones">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let row">
-            <div fxFlex align="center">
+          <!-- Pelicula -->
+          <ng-container matColumnDef="label">
+            <th mat-header-cell *matHeaderCellDef> Pelicula </th>
+            <td mat-cell *matCellDef="let row"> {{row.data.label}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let row">
               <button matTooltip="Mostrar grafo" (click)="mostrarGrafo(row.data)" mat-button>
                 <mat-icon>
-                  <span class="material-symbols-outlined">
-                    hub
-                  </span>
+                  hub
                 </mat-icon>
               </button>
-            </div>
-          </td>
-        </ng-container>
+            </td>
+          </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-    </div>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns;"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
 
-  </mat-card>
-</div>
+    </mat-card>
 
-<br>
-<mat-card>
-  <div id="cy" style="width: 100%; height: 720px;"></div>
+    <br>
+    <mat-card class="mat-elevation-z8 example-full-width" id="cy" style="height: 720px;">
+      {{tituloGraph}}
+    </mat-card>
+
+  </div>
 </mat-card>

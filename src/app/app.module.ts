@@ -10,6 +10,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import {MatIconModule} from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTableModule,
     MatIconModule,
     MatTooltipModule,
-
+    FlexLayoutModule,
+    MatProgressBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

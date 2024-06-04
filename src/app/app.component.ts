@@ -25,6 +25,10 @@ export class AppComponent {
 
   busquedaTitle: string = '';
 
+  busquedaTitlePorNodo: string = '';
+
+  tituloGraph: string = '';
+
   cy: any;
 
   displayedColumns: string[] = ['label', 'acciones'];
@@ -47,17 +51,26 @@ export class AppComponent {
   mostrarGrafo(data: any) {
     const label = data.label;
     const titulolimpio = label.replace(/\s*\(.*?\)\s*$/, '');
-    this.busquedaTitle = titulolimpio;
-    console.log('tutlo: ',this.busquedaTitle);
-    this.filterGraph()
+    this.tituloGraph = label;
+    this.busquedaTitlePorNodo = titulolimpio;
+    console.log('tutlo: ', this.busquedaTitle);
+    const porNodo = "0";
+    this.filterGraph(porNodo, this.busquedaTitlePorNodo)
   }
 
-  async filterGraph(): Promise<void> {
-
+  async filterGraph(porNodo: string, busquedaTitlePorNodo: string): Promise<void> {
     try {
+      this.enProceso = true;
+      let busquedaTitle = "";
+      // let a = busquedaTitle !== "" ?  busquedaTitlePorNodo : this.busquedaTitle
+      if (busquedaTitlePorNodo !== "") {
+        busquedaTitle = busquedaTitlePorNodo
+      } else {
+        busquedaTitle = this.busquedaTitle
+      }
       // const query = 'MATCH (n:Pelicula) RETURN n LIMIT 10'; // Consulta para obtener los primeros 10 nodos
       // const query = 'match p=shortestpath((:Usuario {descripcion: "Usuario 2"})-[*]-(:Usuario {descripcion: "Usuario 3"})) return p'; // Consulta para obtener los primeros 10 nodos
-      const query = `MATCH p=shortestPath((m:Pelicula where m.title =~ "(?i).*${this.busquedaTitle}.*")<-[*]-(u:Usuario)) RETURN p`; // Consulta para obtener los primeros 10 nodos
+      const query = `MATCH p=((g:Genre)<-[*]-(m:Pelicula where m.title =~ "(?i).*${busquedaTitle}.*")<-[*]-(u:Usuario)) RETURN p`; // Consulta para obtener los primeros 10 nodos
       // const query = `${this.busquedaTitle}`; // Consulta para obtener los primeros 10 nodos
       // const query = `MATCH (n:Pelicula) WHERE n.title =~ '(?i).*${this.busquedaTitle}.*' RETURN n`; // Consulta para obtener los primeros 10 nodos
       const result = await this.neo4jService.consultar(query);
@@ -131,6 +144,7 @@ export class AppComponent {
         });
 
         if (esSoloNodos === "0") {
+          // Convertir el Set a un array y eliminar duplicados
           const uniqueNodes = Array.from(new Map(nodes.map(node => [node.data.id, node])).values());
           elements = [...uniqueNodes];
           console.log("esSoloNodos:", elements);
@@ -139,19 +153,30 @@ export class AppComponent {
           // Convertir el Set a un array y eliminar duplicados
           const uniqueNodes = Array.from(new Map(nodes.map(node => [node.data.id, node])).values());
           elements = [...uniqueNodes, ...edges];
-          // Agregar el nodo al array de películas si es de tipo Pelicula
           console.log('Nodos_relacionados:', elements);
 
-          let pelicula = uniqueNodes.filter(peli => peli.data.type === 'Pelicula');
-          let dataSource = new MatTableDataSource(pelicula);
-          this.cantidadRegistros = pelicula.length;
-          this.dataSource = dataSource.data;
-          this.listaDataPelicula = this.dataSource;
-          console.log('dataSource:', this.dataSource);
+          if (porNodo === "1") {
+            // Agregar el nodo al array de películas si es de tipo Pelicula
+            let pelicula = uniqueNodes.filter(peli => peli.data.type === 'Pelicula');
+            let dataSource = new MatTableDataSource(pelicula);
+            this.cantidadRegistros = pelicula.length;
+            this.dataSource = dataSource.data;
+            this.listaDataPelicula = this.dataSource;
+            console.log('dataSource:', this.dataSource);
+          }
 
           this.updateGraph(elements);
+          this.enProceso = false;
         }
+      } else {
+        console.log("No hay registros");
+        this.cantidadRegistros = 0;
+        this.dataSource = [];
+        this.listaDataPelicula = []
+        this.tituloGraph = "";
+        this.updateGraph(elements);
       }
+      this.enProceso = false;
     } catch (error) {
       console.error('Error al consultar datos desde Neo4j:', error);
     }
@@ -226,23 +251,6 @@ export class AppComponent {
     this.cy.json({ elements: elements });
     this.cy.layout({ name: 'cose', padding: 10 }).run();
   }
-
-  /* listarPeliculas() {
-
-    this.enProceso = true;
-
-    this.pasoProcesoService.listarPasosProceso(idProceso, this.paginador).subscribe(respuesta => {
-
-      let dataSource = new MatTableDataSource(respuesta.content);
-
-      this.dataSourcePasosProceso = dataSource.data;
-      this.lPgimPasoProcesoDTO = this.dataSourcePasosProceso;
-      this.paginador.totalElements = respuesta.totalElements;
-      this.cantidadRegistros = this.paginador.totalElements;
-
-      this.enProceso = false;
-    });
-  } */
 
   async conectar(): Promise<void> {
     try {
