@@ -12,10 +12,15 @@ import {MatIconModule} from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { AppRoutingModule } from './app-routing.module';
+import { GeeComponent } from './google-ee/gee/gee.component';
+import { Neo4jComponent } from './google-ee/neo4j/neo4j.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    GeeComponent,
+    Neo4jComponent
   ],
   imports: [
     BrowserModule,
@@ -28,7 +33,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     MatIconModule,
     MatTooltipModule,
     FlexLayoutModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
